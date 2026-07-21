@@ -1,5 +1,18 @@
 const projects = [
   {
+    id: 2,
+    tag: 'Web Application',
+    title: 'Rove\nRide Booking',
+    description:
+      'A ride-booking platform inspired by Uber featuring user authentication, ride management, RESTful API architecture, responsive React UI, and MongoDB database integration.',
+    tech: ['JavaScript', 'React.js', 'Node.js', 'Express.js', 'MongoDB', 'REST API'],
+    link: 'https://github.com/thomas-774/rove',
+    linkLabel: 'View on GitHub',
+    liveLink: null,
+    liveLabel: 'Live Demo',
+    visualClass: 'visual-blue'
+  },
+  {
     id: 1,
     tag: 'Web Application',
     title: 'Movie Web\nApplication',
@@ -14,7 +27,7 @@ const projects = [
   },
   {
     id: 3,
-    tag: 'Web Tool',
+    tag: 'Web Application',
     title: 'GPA\nCalculator',
     description:
       'A GPA calculator supporting both mark-based and letter-grade GPA computation. Features automatic mark-to-grade conversion and a clean, intuitive interface for students.',

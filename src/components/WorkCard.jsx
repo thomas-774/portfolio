@@ -14,6 +14,7 @@ export default function WorkCard({ project, index, isFirst }) {
   const techRef = useRef(null)
   const linkRef = useRef(null)
   const videoRef = useRef(null)
+  const roveVideoRef = useRef(null)
   const gpaVideoRef = useRef(null)
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export default function WorkCard({ project, index, isFirst }) {
     })
     anim.push(parallax)
 
-    const videos = [videoRef.current, gpaVideoRef.current].filter(Boolean)
+    const videos = [videoRef.current, roveVideoRef.current, gpaVideoRef.current].filter(Boolean)
     const observers = []
 
     videos.forEach((video) => {
@@ -97,10 +98,12 @@ export default function WorkCard({ project, index, isFirst }) {
       <div className="work-card-inner">
         <div className="work-card-visual" ref={visualRef}>
           {index === 0 ? (
-            <video ref={videoRef} src="/movie.mp4" muted loop playsInline className="work-card-video" />
+            <video ref={roveVideoRef} src="/rove.mp4" muted loop playsInline className="work-card-video" />
           ) : index === 1 ? (
-            <video ref={gpaVideoRef} src="/GPA.mp4" muted loop playsInline className="work-card-video" />
+            <video ref={videoRef} src="/movie.mp4" muted loop playsInline className="work-card-video" />
           ) : index === 2 ? (
+            <video ref={gpaVideoRef} src="/GPA.mp4" muted loop playsInline className="work-card-video" />
+          ) : index === 3 ? (
             <img src="/e-commer.png" alt="E-Commerce System" className="work-card-img" />
           ) : (
           <svg viewBox="0 0 600 500" fill="none">
