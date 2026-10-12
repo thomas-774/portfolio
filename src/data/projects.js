@@ -10,7 +10,7 @@ const projects = [
     linkLabel: 'View on GitHub',
     liveLink: 'https://teby-demo.vercel.app/login',
     liveLabel: 'Live Demo',
-    media: { type: 'video', src: '/promo-video-ar.mp4' }
+    media: { type: 'video', src: '/promo-video-ar.mp4', poster: '/posters/promo-video-ar.webp' }
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ const projects = [
     linkLabel: 'View on GitHub',
     liveLink: null,
     liveLabel: 'Live Demo',
-    media: { type: 'video', src: '/rove.mp4' }
+    media: { type: 'video', src: '/rove.mp4', poster: '/posters/rove.webp' }
   },
   {
     id: 1,
@@ -36,7 +36,7 @@ const projects = [
     linkLabel: 'View on GitHub',
     liveLink: 'https://move-list.netlify.app/',
     liveLabel: 'Live Demo',
-    media: { type: 'video', src: '/movie.mp4' }
+    media: { type: 'video', src: '/movie.mp4', poster: '/posters/movie.webp' }
   },
   {
     id: 3,
@@ -49,7 +49,7 @@ const projects = [
     linkLabel: 'View on GitHub',
     liveLink: 'https://precious-bonbon-e4dec0.netlify.app/',
     liveLabel: 'Live Demo',
-    media: { type: 'video', src: '/GPA.mp4' }
+    media: { type: 'video', src: '/GPA.mp4', poster: '/posters/GPA.webp' }
   },
   {
     id: 4,
