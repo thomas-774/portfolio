@@ -10,6 +10,35 @@ The site stays static (Vercel free): no backend, no database.
 - [ ] **Vercel dashboard:** turn on Speed Insights (project → Speed Insights → Enable). The code is already in the site
 - [ ] **CV:** the portfolio link in the PDF points to `thomas-sameh-portfolio.netlify.app`; change it to the Vercel URL
 
+## To do: phone view
+
+Full details for each task are in [MOBILE_PLAN.md](MOBILE_PLAN.md).
+
+**Phase 1: fix what is broken**
+- [x] 1.1 Page zooms out around Skills/About: the About photo starts at `x: 60` and makes the page 430px wide; also add `overflow-x: clip` on `html`
+- [x] 1.2 Menu: solid full-screen overlay, links centred (not stuck at the bottom), `100dvh`, scroll lock, close on Escape / tap outside, `visibility: hidden` + `aria-expanded` when closed, "Let's Talk" inside the menu
+- [x] 1.3 Navbar when scrolled: almost solid background on phones so text doesn't show through; a bit shorter
+- [x] 1.4 Hero fits the first screen: `100svh`, smaller photo, "Download CV" visible without scrolling
+- [x] 1.5 Skills cards: text at least 12px (now 8–10px), cards `78vw` so the next one peeks in
+- [x] 1.6 Hover only on mouse (`@media (hover: hover)`), `:active` press feedback on touch
+- [x] 1.7 Layout tidy-up: smaller gaps between sections, work media `aspect-ratio` instead of `30vh`, smaller "01" number, About text left-aligned, Contact buttons in 2 columns with the phone number readable, full-width Send button
+
+**Phase 2: phone animations**
+- [x] 2.1 Work cards: same stacking as desktop on phones (a card taller than the screen pins by its bottom edge, so nothing is cut off)
+- [x] 2.2 Skills: same pinned sideways scroll as desktop on phones (cards swing, snap, progress bar)
+- [x] 2.3 Navbar hides on scroll down / shows on scroll up; menu links slide in one by one; scroll progress bar
+- [x] 2.4 Section titles: label pill pops in, title lines slide up from a mask
+- [x] 2.5 Experience: bullets stagger in, timeline line draws down the card
+- [x] 2.6 Hero: background circles drift (CSS), photo moves up and fades as you scroll away
+- [x] 2.7 About: photo clip-path reveal (no sideways start), paragraphs fade up one by one
+- [x] 2.8 Contact: buttons pop in with a stagger, inputs fade up, bounce when the message is sent
+
+**Phase 3: reduced motion and testing**
+- [x] 3.1 Reduced motion gets short opacity fades instead of nothing
+- [ ] 3.1 Check on your phone whether *Remove animations* / *Reduce Motion* is on (it turns all animations off)
+- [x] 3.2 Test at 360, 390, 430 and 768px wide, plus landscape: no sideways scroll, no zoom-out (headless Chrome with phone emulation: `scrollWidth === innerWidth` everywhere, "Download CV" above the fold from 360×740 up)
+- [ ] 3.2 Test on a real phone (`npm run dev -- --host`) and with a 4× CPU slowdown; Lighthouse mobile Performance ≥ 90, CLS 0
+
 ## Done
 
 - [x] Teby added as project #1 (repo, live demo, promo video)

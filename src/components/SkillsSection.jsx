@@ -20,7 +20,7 @@ export default function SkillsSection() {
     const cards = gsap.utils.toArray(track.querySelectorAll('.service-hang-card'))
     if (cards.length === 0) return
 
-    // Native swipe (mobile / reduced motion): keep the progress bar in sync
+    // Native swipe (reduced motion only): keep the progress bar in sync
     const onNativeScroll = () => {
       const max = wrapper.scrollWidth - wrapper.clientWidth
       gsap.set(progress, { scaleX: max > 0 ? wrapper.scrollLeft / max : 0 })
@@ -29,7 +29,8 @@ export default function SkillsSection() {
 
     const mm = gsap.matchMedia()
 
-    mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+    // Every screen size: the section is pinned and scrolling down moves the cards sideways
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
       section.classList.add('is-pinned')
 
       const distance = () => Math.max(0, track.scrollWidth - wrapper.clientWidth)

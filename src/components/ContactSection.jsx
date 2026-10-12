@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP } from '../lib/gsap'
 import SectionHeader from './SectionHeader'
 import profile from '../data/profile'
-import { prefersReducedMotion } from '../lib/motion'
+import { prefersReducedMotion, fadeIn } from '../lib/motion'
 
 export default function ContactSection() {
   const btnRef = useRef(null)
   const formRef = useRef(null)
+  const sectionRef = useRef(null)
   // idle | sending | sent | error
   const [status, setStatus] = useState('idle')
 
@@ -32,29 +33,48 @@ export default function ContactSection() {
   // Go back to the normal button a few seconds after a successful send
   useEffect(() => {
     if (status !== 'sent') return
+    // Small success bounce
+    if (!prefersReducedMotion()) {
+      gsap.fromTo(btnRef.current, { scale: 1 }, { scale: 1.06, duration: 0.18, ease: 'power2.out', yoyo: true, repeat: 1, clearProps: 'scale' })
+    }
     const id = setTimeout(() => setStatus('idle'), 5000)
     return () => clearTimeout(id)
   }, [status])
 
   useGSAP((context, contextSafe) => {
     const btn = btnRef.current
-    if (!btn || prefersReducedMotion()) return
+    if (!btn) return
+    const linkBtns = sectionRef.current.querySelectorAll('.contact-link-btn')
+    const fields = sectionRef.current.querySelectorAll('.contact-input, .contact-textarea')
 
-    gsap.fromTo(btn,
-      { opacity: 0, y: 30, scale: 0.95 },
-      {
-        scrollTrigger: {
-          trigger: '.contact',
-          start: 'top 70%',
-          toggleActions: 'play none none none'
-        },
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.8,
-        ease: 'power3.out'
+    if (prefersReducedMotion()) {
+      fadeIn([...linkBtns, ...fields, btn], sectionRef.current, 'top 70%')
+      return
+    }
+
+    // The link buttons pop in, the fields fade up one after another, then the button.
+    // clearProps hands transform back to CSS so the :active press works on touch
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top 70%',
+        toggleActions: 'play none none none'
       }
-    )
+    })
+      .fromTo(linkBtns,
+        { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1, duration: 0.5, stagger: 0.07, ease: 'back.out(1.7)', clearProps: 'transform' })
+      .fromTo(fields,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out', clearProps: 'transform' },
+        0.1)
+      .fromTo(btn,
+        { opacity: 0, y: 30, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out', clearProps: 'transform' },
+        0.3)
+
+    // Magnetic button only follows a mouse; on touch the CSS press scale is used
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
 
     // Magnetic button: contextSafe so these tweens are cleaned up too
     const onMove = contextSafe((e) => {
@@ -77,7 +97,7 @@ export default function ContactSection() {
   })
 
   return (
-    <section className="contact" id="contact">
+    <section className="contact" id="contact" ref={sectionRef}>
       <SectionHeader label="Get In Touch" title="Let's work\ntogether" />
       <p className="contact-subtitle">
         Have a project in mind or just want to connect? I&apos;d love to hear from you. Let&apos;s create something great together.

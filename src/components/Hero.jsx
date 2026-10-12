@@ -1,15 +1,15 @@
 import { useRef } from 'react'
 import { gsap, useGSAP } from '../lib/gsap'
 import profile from '../data/profile'
-import { prefersReducedMotion } from '../lib/motion'
+import { prefersReducedMotion, fadeIn } from '../lib/motion'
 
 function HeroBackground() {
   return (
     <div className="hero-bg-shapes">
       <svg viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' }}>
-        <circle cx="200" cy="150" r="300" fill="oklch(65% 0.15 260 / 0.3)" />
-        <circle cx="1200" cy="700" r="400" fill="oklch(50% 0.18 280 / 0.2)" />
-        <circle cx="800" cy="100" r="200" fill="oklch(70% 0.12 240 / 0.25)" />
+        <circle className="hero-circle hero-circle-1" cx="200" cy="150" r="300" fill="oklch(65% 0.15 260 / 0.3)" />
+        <circle className="hero-circle hero-circle-2" cx="1200" cy="700" r="400" fill="oklch(50% 0.18 280 / 0.2)" />
+        <circle className="hero-circle hero-circle-3" cx="800" cy="100" r="200" fill="oklch(70% 0.12 240 / 0.25)" />
       </svg>
     </div>
   )
@@ -57,7 +57,10 @@ export default function Hero() {
   // Runs before the first paint, so the start state is set without a flash;
   // nothing is hidden in CSS, so the text still shows if this never runs
   useGSAP(() => {
-    if (prefersReducedMotion()) return
+    if (prefersReducedMotion()) {
+      fadeIn([greetingRef.current, introRef.current, '.hero-avatar'])
+      return
+    }
 
     const chars = greetingRef.current.querySelectorAll('.char')
     gsap.timeline({ defaults: { ease: 'power3.out' } })
@@ -71,6 +74,19 @@ export default function Hero() {
       ease: 'sine.inOut',
       yoyo: true,
       repeat: -1
+    })
+
+    // Scroll out: the photo (not its floating wrapper) moves up and fades as the hero leaves
+    gsap.to(imgRef.current, {
+      y: -40,
+      opacity: 0.6,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true
+      }
     })
   }, { scope: sectionRef })
 

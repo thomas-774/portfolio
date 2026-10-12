@@ -14,6 +14,10 @@
 }
 
 
+/* body alone does not stop mobile browsers from zooming out when something sticks out */
+html{overflow-x:hidden;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+/* Page scroll is locked while the phone menu is open */
+html.menu-open{overflow:hidden}
 
 body{
   font-family:var(--font-body);
@@ -101,8 +105,8 @@ nav.scrolled{
   border-radius:1px;
   transition:width .3s ease,box-shadow .3s ease
 }
-.nav-links a:hover::after,
 .nav-links a.active::after{width:100%}
+@media (hover:hover){.nav-links a:hover::after{width:100%}}
 
 .nav-cta{
   background:var(--accent);
@@ -114,9 +118,25 @@ nav.scrolled{
   text-decoration:none;
   transition:transform .2s ease,background .2s ease
 }
-.nav-cta:hover{
-  transform:scale(1.05);
-  background:var(--accent-light)
+@media (hover:hover){
+  .nav-cta:hover{
+    transform:scale(1.05);
+    background:var(--accent-light)
+  }
+}
+
+/* Scroll progress under the navbar (phones only; scrubbed by GSAP) */
+.nav-progress{display:none}
+@media(max-width:768px){
+  .nav-progress{
+    display:block;
+    position:absolute;left:0;right:0;bottom:0;
+    height:2px;
+    background:var(--accent);
+    transform:scaleX(0);
+    transform-origin:0 50%;
+    pointer-events:none
+  }
 }
 
 /* ── Mobile menu ── */
@@ -136,27 +156,92 @@ nav.scrolled{
 .menu-btn.open span:nth-child(2){opacity:0}
 .menu-btn.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
 
+.menu-btn{min-width:44px;min-height:44px;align-items:center;justify-content:center}
+
+/* Full-screen menu overlay (phones/tablets). Hidden until GSAP fades it in;
+   visibility:hidden also keeps keyboard and screen readers out of it */
+.mobile-menu{display:none}
+
 @media(max-width:1024px){
   .menu-btn{display:flex}
-  .nav-links{
-    position:fixed;top:0;right:0;
-    width:min(320px,80vw);height:100vh;
+  .nav-links{display:none}
+  .mobile-menu{
+    display:flex;
+    position:fixed;inset:0;
+    z-index:99;
+    height:100vh;
+    height:100dvh;
     flex-direction:column;
-  justify-content:flex-end;
-    align-items:center;
-    gap:40px;
-    background:oklch(12% .01 260 / .95);
-    backdrop-filter:blur(24px);
-    -webkit-backdrop-filter:blur(24px);
-    transform:translateX(100%);
-    transition:transform .4s cubic-bezier(.22,1,.36,1)
+    padding:88px 24px 40px;
+    background:oklch(22% .08 260);
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    visibility:hidden;
+    opacity:0
   }
-  .nav-links.open{transform:translateX(0)}
-  .nav-links a{font-size:16px}
+  .mobile-menu-links{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    width:100%;
+    /* Centred, but scrolls from the top instead of hiding under the bar when it does not fit */
+    margin:auto 0
+  }
+  .mobile-menu-links a[data-nav-link]{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:52px;
+    padding:0 24px;
+    font-family:var(--font-display);
+    font-size:clamp(28px,8vw,36px);
+    color:var(--surface);
+    text-decoration:none;
+    transition:color .2s ease
+  }
+  .mobile-menu-links a.active{color:var(--accent-light)}
+  .mobile-menu-links a[data-nav-link]:active{color:var(--accent-light)}
+  .mobile-menu-cta-item{margin-top:28px}
+  .mobile-menu .nav-cta{
+    display:inline-flex;
+    align-items:center;
+    min-height:48px;
+    padding:0 36px;
+    font-size:15px;
+    border-radius:100px
+  }
+  /* The menu covers the page: the bar keeps only the logo and the close button */
+  @media(max-height:500px){
+    .mobile-menu{padding-top:72px}
+    .mobile-menu-links a[data-nav-link]{min-height:44px;font-size:24px}
+    .mobile-menu-cta-item{margin-top:12px}
+  }
+  html.menu-open nav{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+  html.menu-open .nav-actions > .nav-cta,
+  html.menu-open .nav-progress{visibility:hidden}
+}
+
+@media(max-width:768px){
+  nav{padding:12px 20px}
+  /* Almost solid: no section text showing through the logo and menu button */
+  nav.scrolled{
+    background:oklch(55% .20 260 / .97);
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none
+  }
+}
+
+/* Very small phones: "Let's Talk" lives in the menu only */
+@media(max-width:380px){
+  .nav-actions > .nav-cta{display:none}
 }
 
 .hero {
   min-height: 100vh;
+  /* svh: the screen height with the phone's browser toolbar showing */
+  min-height: 100svh;
   display: flex;
   align-items: flex-end;
   padding: 120px 40px 40px;
@@ -167,7 +252,20 @@ nav.scrolled{
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* The circles may bleed down into Work, but never sideways (that widens the page) */
+  overflow-x: clip;
 }
+
+/* Background circles drift slowly (CSS only, transform only) */
+.hero-circle { transform-box: fill-box; transform-origin: center; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-circle-1 { animation: heroDrift1 16s ease-in-out infinite alternate; }
+  .hero-circle-2 { animation: heroDrift2 20s ease-in-out infinite alternate; }
+  .hero-circle-3 { animation: heroDrift3 12s ease-in-out infinite alternate; }
+}
+@keyframes heroDrift1 { to { transform: translate(60px, 40px) scale(1.05); } }
+@keyframes heroDrift2 { to { transform: translate(-80px, -50px) scale(.95); } }
+@keyframes heroDrift3 { to { transform: translate(-50px, 60px); } }
 
 .hero-content {
   display: grid;
@@ -218,7 +316,7 @@ nav.scrolled{
   text-decoration:none;
   transition:transform .2s ease,background .2s ease
 }
-.hero-cv-btn:hover{transform:translateY(-2px);background:var(--accent-light)}
+@media (hover:hover){.hero-cv-btn:hover{transform:translateY(-2px);background:var(--accent-light)}}
 .hero-cv-btn svg{width:18px;height:18px}
 
 .hero-avatar{
@@ -297,6 +395,15 @@ section {
   margin-bottom:48px;
   white-space:pre-line
 }
+/* Each line is its own mask; the inner span slides up from below it.
+   The padding/negative margin keeps descenders (g, y) from being cut */
+.section-title-line{
+  display:block;
+  overflow:hidden;
+  padding-bottom:.12em;
+  margin-bottom:-.12em
+}
+.section-title-line > span{display:inline-block}
 
 .work {
   background: var(--bg);
@@ -343,8 +450,10 @@ section {
   box-shadow:0 20px 60px oklch(15% .02 260 / .25);
   transition:box-shadow .4s ease,transform .4s ease
 }
-.work-card-full:hover .work-card-inner{
-  box-shadow:0 30px 80px oklch(15% .02 260 / .35)
+@media (hover:hover){
+  .work-card-full:hover .work-card-inner{
+    box-shadow:0 30px 80px oklch(15% .02 260 / .35)
+  }
 }
 
 .work-card-visual {
@@ -464,9 +573,11 @@ section {
   font-weight:500;
   transition:border-color .3s ease,background .3s ease
 }
-.tech-pill:hover{
-  border-color:var(--accent);
-  background:var(--bg-deep)
+@media (hover:hover){
+  .tech-pill:hover{
+    border-color:var(--accent);
+    background:var(--bg-deep)
+  }
 }
 
 .work-card-links {
@@ -489,18 +600,22 @@ section {
   text-decoration:none;
   transition:background .3s ease,color .3s ease,border-color .3s ease
 }
-.work-card-link:hover{background:var(--accent);color:var(--surface)}
 .work-card-link svg{width:18px;height:18px;transition:transform .3s ease}
-.work-card-link:hover svg{transform:translateX(4px)}
+@media (hover:hover){
+  .work-card-link:hover{background:var(--accent);color:var(--surface)}
+  .work-card-link:hover svg{transform:translateX(4px)}
+}
 
 .work-card-link-live {
   background: oklch(52% 0.16 150);
   border-color: oklch(52% 0.16 150);
   color: var(--surface);
 }
-.work-card-link-live:hover {
-  background: oklch(46% 0.15 150);
-  border-color: oklch(46% 0.15 150);
+@media (hover:hover){
+  .work-card-link-live:hover {
+    background: oklch(46% 0.15 150);
+    border-color: oklch(46% 0.15 150);
+  }
 }
 
 .work-card-visual.has-video {
@@ -525,6 +640,20 @@ section {
   border-radius: 24px;
   padding: clamp(28px, 4vw, 48px);
   box-shadow: 0 20px 60px oklch(15% .02 260 / .25);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Accent line down the left edge, drawn by GSAP as you scroll through the card */
+.exp-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--accent);
+  transform-origin: 50% 0;
+  pointer-events: none;
 }
 
 .exp-meta {
@@ -631,7 +760,7 @@ section {
   z-index: 5;
 }
 
-/* Default (mobile / reduced motion): native horizontal swipe with snap */
+/* Default (reduced motion): native horizontal swipe with snap */
 .services-wire-wrapper {
   position: relative;
   width: 100%;
@@ -747,9 +876,11 @@ section {
   transition: transform .3s ease, box-shadow .3s ease;
 }
 
-.service-hang-body:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px oklch(15% 0.02 260 / 0.4);
+@media (hover:hover){
+  .service-hang-body:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px oklch(15% 0.02 260 / 0.4);
+  }
 }
 
 .service-hang-header {
@@ -965,12 +1096,18 @@ section {
   flex: 1;
 }
 
-.about-img {
+.about-img-frame {
   width: 100%;
   max-width: 400px;
   border-radius: 24px;
-  height: auto;
+  overflow: hidden;
   margin-top: 60px;
+}
+
+.about-img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .contact {
@@ -1060,9 +1197,11 @@ section {
   transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.contact-link-btn:hover {
-  background: var(--accent-light);
-  transform: translateY(-4px);
+@media (hover:hover){
+  .contact-link-btn:hover {
+    background: var(--accent-light);
+    transform: translateY(-4px);
+  }
 }
 
 .contact-link-btn-phone {
@@ -1089,13 +1228,22 @@ section {
   text-decoration:none;
   transition:transform .3s ease,background .3s ease
 }
-.contact-btn:hover{transform:scale(1.05);background:var(--accent-light)}
 .contact-btn svg{width:20px;height:20px;transition:transform .3s ease}
-.contact-btn:hover svg{transform:translateX(4px)}
+@media (hover:hover){
+  .contact-btn:hover{transform:scale(1.05);background:var(--accent-light)}
+  .contact-btn:hover svg{transform:translateX(4px)}
+}
 .contact-btn:disabled{opacity:.7;cursor:wait}
 .contact-status{min-height:1.5em;font-size:14px;line-height:1.5;color:var(--surface)}
 .contact-status-error{font-weight:600}
 .contact-status a{color:inherit;text-decoration:underline}
+
+/* Touch screens: a short press instead of hover effects that stick after a tap */
+@media (hover:none){
+  .nav-cta:active,.hero-cv-btn:active,.work-card-link:active,
+  .contact-link-btn:active,.contact-btn:active,.footer-socials a:active{transform:scale(.97)}
+  .service-hang-body:active{transform:scale(.98)}
+}
 
 footer{
   background:var(--bg-deep);
@@ -1117,27 +1265,33 @@ footer{
   transition:color .2s ease,transform .2s ease;
   display:flex
 }
-.footer-socials a:hover{
-  color:var(--accent);
-  transform:translateY(-2px)
+@media (hover:hover){
+  .footer-socials a:hover{
+    color:var(--accent);
+    transform:translateY(-2px)
+  }
 }
 
 @media(max-width:1024px){
   .hero-content{grid-template-columns:1fr;text-align:center}
   .hero-intro{margin:0 auto}
-  .hero-avatar{order:-1}
+  .hero-avatar{order:-1;justify-content:center}
   .avatar-img{max-width:360px}
   .services-header{padding:80px 20px 30px}
-  .service-hang-card{flex:0 0 260px}
+  .service-hang-card{flex:0 0 280px}
   .service-hang-header-text{font-size:40px}
-  .service-hang-name{font-size:16px}
+  .service-hang-name{font-size:17px}
   /* Smaller text needs more contrast (4.5:1 instead of 3:1) */
   .service-hang-bottom{font-size:18px;color:oklch(15% 0.02 260 / 0.65)}
-  .service-hang-skill-name{font-size:8px}
-  .service-hang-skill-tool{font-size:9px}
+  /* Readable on a phone: at least 12px, 11px for the small uppercase labels */
+  .service-hang-label{font-size:11px}
+  .service-hang-skills{flex-wrap:wrap;row-gap:10px}
+  .service-hang-skill{flex:0 0 50%}
+  .service-hang-skill-name{font-size:12px;letter-spacing:.02em}
+  .service-hang-skill-tool{font-size:12px}
   .about-inner{flex-direction:column;text-align:center}
   .about-stats{justify-content:center}
-  .about-img{margin-top:0}
+  .about-img-frame{margin-top:0}
   .contact-bottom{grid-template-columns:1fr;gap:32px}
   .contact-links{justify-self:center;margin-left:0}
   .contact{padding:100px 40px}
@@ -1149,84 +1303,158 @@ footer{
   .work-card-number{font-size:100px;right:30px}
 }
 
+/* Phones: cards grow to fit their content (a tall card pins by its bottom edge) */
+@media (max-width: 768px) {
+  .work-card-full {
+    height: auto;
+    margin-bottom: 24px;
+  }
+
+  /* Desktop screenshots keep their shape instead of a fixed 30vh strip */
+  .work-card-visual {
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+
+  /* The faint number sits small in the top-right corner, not behind the title */
+  .work-card-number {
+    font-size: 56px;
+    top: 16px;
+    right: 20px;
+  }
+
+  /* Long paragraphs are easier to read left-aligned */
+  .about-text {
+    text-align: left;
+  }
+
+  .about-stats {
+    justify-content: flex-start;
+  }
+
+  .about-img-frame {
+    max-width: 320px;
+  }
+
+  .about-img {
+    max-height: 60svh;
+    object-fit: cover;
+  }
+}
+
 @media (max-width: 640px) {
-  nav {
-    padding: 16px 20px;
-  }
-
   .hero {
-    padding: 100px 20px 60px;
+    /* 64px navbar + a little room */
+    padding: 80px 20px 32px;
   }
 
-  section {
-    padding: 80px 20px;
+  /* Name, intro and the CV button fit on the first screen (360×740 and up) */
+  .hero-content {
+    gap: 16px;
   }
 
-  .work-header {
-    padding: 80px 20px 40px;
-  }
-
-  .about {
-    padding: 80px 20px;
+  .avatar-img {
+    width: min(100%, 38svh);
   }
 
   .hero-greeting {
     font-size: 64px;
+    margin-bottom: 16px;
+  }
+
+  .hero-intro {
+    padding: 20px;
+  }
+
+  .hero-intro p {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .hero-cv-btn {
+    margin-top: 16px;
+  }
+
+  /* Smaller gaps between sections */
+  section {
+    padding: 64px 20px;
+  }
+
+  .section-title {
+    margin-bottom: 32px;
+  }
+
+  .experience .section-title {
+    margin-bottom: 28px;
+  }
+
+  .work-header {
+    padding: 64px 20px 24px;
+  }
+
+  .about {
+    padding: 64px 20px;
   }
 
   .about-stats {
-    /*flex-direction: column;*/
     gap: 24px;
-    justify-content: center;
   }
 
   .contact {
-    padding: 80px 20px;
+    padding: 64px 20px;
   }
 
   .contact-bottom {
-    justify-content: center;
     grid-template-columns: 1fr;
     gap: 24px;
   }
 
+  /* Two columns; the phone number gets its own full-width row at normal size */
   .contact-links {
-    max-width: 400px;
-    justify-self: center;
-    margin-left: 10;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    width: 100%;
+    max-width: none;
+    justify-self: stretch;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .contact-link-btn,
+  .contact-link-btn-phone {
+    aspect-ratio: auto;
+    flex-direction: row;
+    min-height: 56px;
+    padding: 0 12px;
+    gap: 10px;
+    font-size: 15px;
+  }
+
+  .contact-link-btn-phone {
+    grid-column: 1 / -1;
+    order: 1;
+  }
+
+  .contact-link-btn svg {
+    width: 20px;
+    height: 20px;
   }
 
   .contact-input,
   .contact-textarea {
-    font-size: 15px;
+    font-size: 16px;
     padding: 14px 16px;
   }
 
-  .contact-link-btn {
-    font-size: 12px;
-  }
-
-  .contact-link-btn-phone {
-    font-size: 10.5px;
-  }
-
-  .contact-link-btn svg {
-    width: 18px;
-    height: 18px;
+  .contact-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .work-card-content {
-    padding: 30px 20px;
+    padding: 28px 20px;
   }
 
   .work-card-full {
     padding: 12px 16px;
-  }
-
-  .work-card-visual {
-    height: 30vh;
   }
 
   .work-card-link {
@@ -1239,11 +1467,12 @@ footer{
   }
 
   .services-header {
-    padding: 60px 16px 20px;
+    padding: 48px 20px 16px;
   }
 
+  /* One card fits with the next one peeking in: shows that the row can be swiped */
   .service-hang-card {
-    flex: 0 0 240px;
+    flex: 0 0 min(78vw, 300px);
   }
 
   .service-hang-header-text {
@@ -1251,7 +1480,7 @@ footer{
   }
 
   .service-hang-name {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .service-hang-bottom {
@@ -1260,32 +1489,16 @@ footer{
 
   .services-wire-track {
     gap: 16px;
-    padding: 0 16px;
+    padding: 0 20px;
   }
 
   .services-wire-wrapper {
-    scroll-padding-inline: 16px;
+    scroll-padding-inline: 20px;
   }
 
   .services-progress {
-    width: calc(100% - 32px);
-    margin-bottom: 60px;
-  }
-
-  .service-hang-skills {
-    flex-wrap: wrap;
-  }
-
-  .service-hang-skill {
-    flex: 0 0 50%;
-  }
-}
-
-/* Phones/tablets: no card stacking, so cards grow to fit their content */
-@media (max-width: 768px) {
-  .work-card-full {
-    height: auto;
-    margin-bottom: 24px;
+    width: calc(100% - 40px);
+    margin-bottom: 48px;
   }
 }
 

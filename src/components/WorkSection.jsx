@@ -11,22 +11,25 @@ export default function WorkSection() {
     const cards = stackRef.current?.querySelectorAll('.work-card-full')
     if (!cards || cards.length < 2) return
 
-    // Stacking only on desktop (on phones the cards are taller than the screen)
-    // and only when the visitor has not asked for less motion
+    // Only when the visitor has not asked for less motion
     const mm = gsap.matchMedia()
 
-    mm.add('(min-width: 769px) and (prefers-reduced-motion: no-preference)', () => {
+    // Every screen size: each card is pinned and the next one stacks on top of it.
+    // A card taller than the screen (phones) pins once its bottom reaches the
+    // bottom of the screen, so all of it is seen before the next card covers it
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
       cards.forEach((card, i) => {
         if (i < cards.length - 1) {
           const inner = card.querySelector('.work-card-inner')
           ScrollTrigger.create({
             trigger: card,
-            start: 'top top+=20',
+            start: () => (card.offsetHeight > window.innerHeight - 20 ? 'bottom bottom' : 'top top+=20'),
             endTrigger: cards[i + 1],
             end: 'top top',
             pin: true,
             pinSpacing: false,
             scrub: true,
+            invalidateOnRefresh: true,
             animation: gsap.to(inner, {
               scale: 0.94,
               borderRadius: '20px',

@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { gsap, useGSAP } from '../lib/gsap'
-import { prefersReducedMotion } from '../lib/motion'
+import { fadeIn } from '../lib/motion'
 
 export default function WorkCard({ project, index, isFirst }) {
   const cardRef = useRef(null)
@@ -17,41 +17,53 @@ export default function WorkCard({ project, index, isFirst }) {
   // Runs before the first paint: nothing is hidden in CSS, so if this never
   // runs the card still shows
   useGSAP(() => {
-    const reduced = prefersReducedMotion()
+    const number = numberRef.current
+    const visual = visualRef.current
+    const text = [tagRef.current, titleRef.current, descRef.current, techRef.current, linkRef.current]
 
-    // Reduced motion: no entrance animation, everything stays at its CSS state
-    if (!reduced && isFirst) {
-      gsap.timeline({ defaults: { ease: 'power3.out' } })
-        .fromTo(numberRef.current, { opacity: 0, y: 40 }, { opacity: 0.06, y: 0, duration: 0.5 })
-        .fromTo(visualRef.current, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6 }, '-=0.3')
-        .fromTo(tagRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '-=0.3')
-        .fromTo(titleRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
-        .fromTo(descRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2')
-        .fromTo(techRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '-=0.15')
-        .fromTo(linkRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.2 }, '-=0.1')
-    } else if (!reduced) {
-      gsap.set([tagRef.current, titleRef.current, descRef.current, techRef.current, linkRef.current, numberRef.current], { opacity: 0, y: 40 })
-      gsap.set(visualRef.current, { scale: 0.85, opacity: 0 })
+    // matchMedia re-runs this (and reverts the old version) when the screen size
+    // or the motion setting changes
+    const mm = gsap.matchMedia()
+    mm.add({ phone: '(max-width: 768px)', reduced: '(prefers-reduced-motion: reduce)' }, (context) => {
+      const { phone, reduced } = context.conditions
 
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: cardRef.current,
-          start: 'top 85%',
-          end: 'top 25%',
-          toggleActions: 'play none none none'
-        }
-      })
-        .to(numberRef.current, { opacity: 0.06, y: 0, duration: 0.3 })
-        .to(visualRef.current, { scale: 1, opacity: 1, duration: 0.4 }, '-=0.2')
-        .to(tagRef.current, { opacity: 1, y: 0, duration: 0.2 }, '-=0.2')
-        .to(titleRef.current, { opacity: 1, y: 0, duration: 0.3 }, '-=0.15')
-        .to(descRef.current, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2')
-        .to(techRef.current, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2')
-        .to(linkRef.current, { opacity: 1, y: 0, duration: 0.2 }, '-=0.15')
-    }
+      if (reduced) {
+        fadeIn([number, visual, ...text], cardRef.current)
+        return
+      }
 
-    if (!reduced) {
-      gsap.to(visualRef.current, {
+      // On phones the first card is below the fold, so it waits for the scroll too
+      if (isFirst && !phone) {
+        gsap.timeline({ defaults: { ease: 'power3.out' } })
+          .fromTo(number, { opacity: 0, y: 40 }, { opacity: 0.06, y: 0, duration: 0.5 })
+          .fromTo(visual, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6 }, '-=0.3')
+          .fromTo(tagRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '-=0.3')
+          .fromTo(titleRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
+          .fromTo(descRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2')
+          .fromTo(techRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '-=0.15')
+          .fromTo(linkRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.2 }, '-=0.1')
+      } else {
+        gsap.set([...text, number], { opacity: 0, y: 40 })
+        gsap.set(visual, { scale: 0.85, opacity: 0 })
+
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: cardRef.current,
+            start: 'top 85%',
+            end: 'top 25%',
+            toggleActions: 'play none none none'
+          }
+        })
+          .to(number, { opacity: 0.06, y: 0, duration: 0.3 })
+          .to(visual, { scale: 1, opacity: 1, duration: 0.4 }, '-=0.2')
+          .to(tagRef.current, { opacity: 1, y: 0, duration: 0.2 }, '-=0.2')
+          .to(titleRef.current, { opacity: 1, y: 0, duration: 0.3 }, '-=0.15')
+          .to(descRef.current, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2')
+          .to(techRef.current, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2')
+          .to(linkRef.current, { opacity: 1, y: 0, duration: 0.2 }, '-=0.15')
+      }
+
+      gsap.to(visual, {
         scrollTrigger: {
           trigger: cardRef.current,
           start: 'top bottom',
@@ -61,7 +73,7 @@ export default function WorkCard({ project, index, isFirst }) {
         y: -30,
         ease: 'none'
       })
-    }
+    })
 
     const video = videoRef.current
     const observers = []
