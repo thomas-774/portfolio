@@ -1,8 +1,5 @@
 import { useCallback } from 'react'
-import { gsap } from 'gsap'
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-
-gsap.registerPlugin(ScrollToPlugin)
+import { gsap } from '../lib/gsap'
 
 export function useScrollTo() {
   const scrollTo = useCallback((href) => {

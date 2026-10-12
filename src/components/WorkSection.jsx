@@ -1,23 +1,21 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRef } from 'react'
+import { gsap, ScrollTrigger, useGSAP } from '../lib/gsap'
 import SectionHeader from './SectionHeader'
 import WorkCard from './WorkCard'
 import projects from '../data/projects'
 
-gsap.registerPlugin(ScrollTrigger)
-
 export default function WorkSection() {
   const stackRef = useRef(null)
 
-  useEffect(() => {
+  useGSAP(() => {
     const cards = stackRef.current?.querySelectorAll('.work-card-full')
     if (!cards || cards.length < 2) return
 
-    // Stacking only on desktop: on phones the cards are taller than the screen
+    // Stacking only on desktop (on phones the cards are taller than the screen)
+    // and only when the visitor has not asked for less motion
     const mm = gsap.matchMedia()
 
-    mm.add('(min-width: 769px)', () => {
+    mm.add('(min-width: 769px) and (prefers-reduced-motion: no-preference)', () => {
       cards.forEach((card, i) => {
         if (i < cards.length - 1) {
           const inner = card.querySelector('.work-card-inner')
@@ -40,9 +38,7 @@ export default function WorkSection() {
         }
       })
     })
-
-    return () => mm.revert()
-  }, [])
+  }, { scope: stackRef })
 
   return (
     <section className="work" id="work">

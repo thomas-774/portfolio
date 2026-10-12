@@ -1,13 +1,14 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-gsap.registerPlugin(ScrollTrigger)
+import { useRef } from 'react'
+import { gsap, useGSAP } from '../lib/gsap'
+import { prefersReducedMotion } from '../lib/motion'
 
 export default function AboutVisual() {
   const ref = useRef(null)
 
-  useEffect(() => {
-    const anim = gsap.fromTo(ref.current,
+  useGSAP(() => {
+    if (prefersReducedMotion()) return
+
+    gsap.fromTo(ref.current,
       { opacity: 0, x: 60 },
       {
         scrollTrigger: {
@@ -21,12 +22,7 @@ export default function AboutVisual() {
         ease: 'power3.out'
       }
     )
-
-    return () => {
-      anim.kill()
-      if (anim.scrollTrigger) anim.scrollTrigger.kill()
-    }
-  }, [])
+  })
 
   return (
     <div className="about-visual">

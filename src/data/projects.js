@@ -5,12 +5,13 @@ const projects = [
     title: 'Teby\nClinic Management',
     description:
       'A clinic management SaaS for doctors: patient records, visits and installment payments, online booking with auto-generated slots, and printable prescriptions with PDF/Word export. Bilingual Arabic/English.',
+    highlights: ['Bilingual RTL interface', 'Automatic slot generation', 'PDF / Word export', 'CI with automated tests'],
     tech: ['React', 'Laravel 13', 'PHP 8.3', 'MySQL', 'Sanctum', 'TanStack Query', 'Tailwind', 'i18next'],
     link: 'https://github.com/thomas-774/clinic-management',
     linkLabel: 'View on GitHub',
     liveLink: 'https://teby-demo.vercel.app/login',
     liveLabel: 'Live Demo',
-    media: { type: 'video', src: '/promo-video-ar.mp4', poster: '/posters/promo-video-ar.webp' }
+    media: { type: 'video', src: '/promo-video-ar.mp4', webm: '/promo-video-ar.webm', poster: '/posters/promo-video-ar.webp' }
   },
   {
     id: 2,
@@ -23,7 +24,7 @@ const projects = [
     linkLabel: 'View on GitHub',
     liveLink: null,
     liveLabel: 'Live Demo',
-    media: { type: 'video', src: '/rove.mp4', poster: '/posters/rove.webp' }
+    media: { type: 'video', src: '/rove.mp4', webm: '/rove.webm', poster: '/posters/rove.webp' }
   },
   {
     id: 1,
@@ -36,7 +37,7 @@ const projects = [
     linkLabel: 'View on GitHub',
     liveLink: 'https://move-list.netlify.app/',
     liveLabel: 'Live Demo',
-    media: { type: 'video', src: '/movie.mp4', poster: '/posters/movie.webp' }
+    media: { type: 'video', src: '/movie.mp4', webm: '/movie.webm', poster: '/posters/movie.webp' }
   },
   {
     id: 3,
@@ -49,7 +50,7 @@ const projects = [
     linkLabel: 'View on GitHub',
     liveLink: 'https://precious-bonbon-e4dec0.netlify.app/',
     liveLabel: 'Live Demo',
-    media: { type: 'video', src: '/GPA.mp4', poster: '/posters/GPA.webp' }
+    media: { type: 'video', src: '/GPA.mp4', webm: '/GPA.webm', poster: '/posters/GPA.webp' }
   },
   {
     id: 4,

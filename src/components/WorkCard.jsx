@@ -1,8 +1,6 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
+import { useRef } from 'react'
+import { gsap, useGSAP } from '../lib/gsap'
+import { prefersReducedMotion } from '../lib/motion'
 
 export default function WorkCard({ project, index, isFirst }) {
   const cardRef = useRef(null)
@@ -16,12 +14,14 @@ export default function WorkCard({ project, index, isFirst }) {
   const videoRef = useRef(null)
   const { media } = project
 
-  useEffect(() => {
-    const anim = []
+  // Runs before the first paint: nothing is hidden in CSS, so if this never
+  // runs the card still shows
+  useGSAP(() => {
+    const reduced = prefersReducedMotion()
 
-    if (isFirst) {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-      tl
+    // Reduced motion: no entrance animation, everything stays at its CSS state
+    if (!reduced && isFirst) {
+      gsap.timeline({ defaults: { ease: 'power3.out' } })
         .fromTo(numberRef.current, { opacity: 0, y: 40 }, { opacity: 0.06, y: 0, duration: 0.5 })
         .fromTo(visualRef.current, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6 }, '-=0.3')
         .fromTo(tagRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '-=0.3')
@@ -29,12 +29,11 @@ export default function WorkCard({ project, index, isFirst }) {
         .fromTo(descRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2')
         .fromTo(techRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '-=0.15')
         .fromTo(linkRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.2 }, '-=0.1')
-      anim.push(tl)
-    } else {
+    } else if (!reduced) {
       gsap.set([tagRef.current, titleRef.current, descRef.current, techRef.current, linkRef.current, numberRef.current], { opacity: 0, y: 40 })
       gsap.set(visualRef.current, { scale: 0.85, opacity: 0 })
 
-      const tl = gsap.timeline({
+      gsap.timeline({
         scrollTrigger: {
           trigger: cardRef.current,
           start: 'top 85%',
@@ -42,7 +41,6 @@ export default function WorkCard({ project, index, isFirst }) {
           toggleActions: 'play none none none'
         }
       })
-      tl
         .to(numberRef.current, { opacity: 0.06, y: 0, duration: 0.3 })
         .to(visualRef.current, { scale: 1, opacity: 1, duration: 0.4 }, '-=0.2')
         .to(tagRef.current, { opacity: 1, y: 0, duration: 0.2 }, '-=0.2')
@@ -50,30 +48,39 @@ export default function WorkCard({ project, index, isFirst }) {
         .to(descRef.current, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2')
         .to(techRef.current, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2')
         .to(linkRef.current, { opacity: 1, y: 0, duration: 0.2 }, '-=0.15')
-      anim.push(tl)
     }
 
-    const parallax = gsap.to(visualRef.current, {
-      scrollTrigger: {
-        trigger: cardRef.current,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1
-      },
-      y: -30,
-      ease: 'none'
-    })
-    anim.push(parallax)
+    if (!reduced) {
+      gsap.to(visualRef.current, {
+        scrollTrigger: {
+          trigger: cardRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1
+        },
+        y: -30,
+        ease: 'none'
+      })
+    }
 
     const video = videoRef.current
     const observers = []
 
     if (video) {
+      // Fill in the <source> URLs only when needed; the browser then picks WebM or MP4
+      const load = () => {
+        if (video.dataset.loaded) return
+        video.querySelectorAll('source').forEach((s) => { s.src = s.dataset.src })
+        if (video.dataset.poster) video.poster = video.dataset.poster
+        video.dataset.loaded = 'true'
+        video.load()
+      }
+
       // Start downloading only when the card is close to the screen
       const loadObs = new IntersectionObserver(
         ([entry]) => {
           if (!entry.isIntersecting) return
-          video.src = video.dataset.src
+          load()
           loadObs.disconnect()
         },
         { rootMargin: '400px 0px' }
@@ -81,7 +88,7 @@ export default function WorkCard({ project, index, isFirst }) {
       const playObs = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            if (!video.getAttribute('src')) video.src = video.dataset.src
+            load()
             video.play().catch(() => {})
           } else {
             video.pause()
@@ -94,21 +101,18 @@ export default function WorkCard({ project, index, isFirst }) {
       observers.push(loadObs, playObs)
     }
 
-    return () => {
-      anim.forEach((a) => {
-        a.kill()
-        if (a.scrollTrigger) a.scrollTrigger.kill()
-      })
-      observers.forEach((obs) => obs.disconnect())
-    }
-  }, [isFirst])
+    return () => observers.forEach((obs) => obs.disconnect())
+  }, { scope: cardRef, dependencies: [isFirst] })
 
   return (
     <div className="work-card-full" ref={cardRef}>
       <div className="work-card-inner">
         <div className={`work-card-visual${media?.type === 'video' ? ' has-video' : ''}`} ref={visualRef}>
           {media?.type === 'video' && (
-            <video ref={videoRef} data-src={media.src} poster={media.poster} muted loop playsInline preload="none" className="work-card-video" />
+            <video ref={videoRef} data-poster={media.poster} muted loop playsInline preload="none" className="work-card-video">
+              {media.webm && <source data-src={media.webm} type="video/webm" />}
+              <source data-src={media.src} type="video/mp4" />
+            </video>
           )}
           {media?.type === 'image' && (
             <img src={media.src} alt={media.alt} loading="lazy" className="work-card-img" />
@@ -118,7 +122,16 @@ export default function WorkCard({ project, index, isFirst }) {
           <span className="work-card-number" ref={numberRef}>{String(index + 1).padStart(2, '0')}</span>
           <span className="work-card-tag" ref={tagRef}>{project.tag}</span>
           <h3 className="work-card-title" ref={titleRef}>{project.title}</h3>
-          <p className="work-card-desc" ref={descRef}>{project.description}</p>
+          <div ref={descRef}>
+            <p className="work-card-desc">{project.description}</p>
+            {project.highlights && (
+              <ul className="work-card-highlights" aria-label="Highlights">
+                {project.highlights.map((h) => (
+                  <li key={h}>{h}</li>
+                ))}
+              </ul>
+            )}
+          </div>
           <div className="work-card-tech" ref={techRef}>
             {project.tech.map((t) => (
               <span className="tech-pill" key={t}>{t}</span>

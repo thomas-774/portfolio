@@ -24,7 +24,7 @@ export default function SkillCard({ skill }) {
               </div>
             ))}
           </div>
-          <div className="service-hang-bottom">
+          <div className="service-hang-bottom" aria-hidden="true">
             {skill.bottom} <span>&rarr;</span> {skill.bottomEnd}
           </div>
         </div>

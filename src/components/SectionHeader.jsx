@@ -1,17 +1,15 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
+import { useRef } from 'react'
+import { gsap, useGSAP } from '../lib/gsap'
+import { prefersReducedMotion } from '../lib/motion'
 
 export default function SectionHeader({ label, title }) {
   const titleRef = useRef(null)
 
-  useEffect(() => {
+  useGSAP(() => {
     const el = titleRef.current
-    if (!el) return
+    if (!el || prefersReducedMotion()) return
 
-    const anim = gsap.fromTo(el,
+    gsap.fromTo(el,
       { opacity: 0, y: 40 },
       {
         scrollTrigger: {
@@ -25,12 +23,7 @@ export default function SectionHeader({ label, title }) {
         ease: 'power3.out'
       }
     )
-
-    return () => {
-      anim.kill()
-      if (anim.scrollTrigger) anim.scrollTrigger.kill()
-    }
-  }, [])
+  })
 
   const parts = title.replace(/\\n/g, '\n').split('\n')
 

@@ -5,8 +5,8 @@ export function useCursor() {
   const posRef = useRef({ mouseX: 0, mouseY: 0, cursorX: 0, cursorY: 0 })
 
   useEffect(() => {
-    // No custom cursor on touch screens
-    if (!window.matchMedia('(pointer: fine)').matches) return
+    // No custom cursor on touch screens or when less motion is requested (CSS hides it too)
+    if (!window.matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)').matches) return
 
     let rafId = null
 

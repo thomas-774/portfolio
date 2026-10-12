@@ -60,6 +60,21 @@ const skills = [
     bottomEnd: 'NOSQL'
   },
   {
+    id: 8,
+    badge: 'QA',
+    header: 'TEST',
+    label: 'Testing / Quality',
+    name: 'Code Quality',
+    skills: [
+      { name: 'Pest', tool: 'PHP Tests' },
+      { name: 'Vitest', tool: 'JS Tests' },
+      { name: 'GitHub Actions', tool: 'CI' },
+      { name: 'ESLint', tool: 'Linting' }
+    ],
+    bottom: 'TEST',
+    bottomEnd: 'SHIP'
+  },
+  {
     id: 4,
     badge: 'ENG',
     header: 'ENG',

@@ -1,11 +1,8 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRef } from 'react'
+import { gsap, useGSAP } from '../lib/gsap'
 import SectionHeader from './SectionHeader'
 import SkillCard from './SkillCard'
 import skills from '../data/skills'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const MAX_SWING = 6
 
@@ -15,7 +12,7 @@ export default function SkillsSection() {
   const trackRef = useRef(null)
   const progressRef = useRef(null)
 
-  useEffect(() => {
+  useGSAP(() => {
     const section = sectionRef.current
     const wrapper = wrapperRef.current
     const track = trackRef.current
@@ -39,7 +36,7 @@ export default function SkillsSection() {
       const swing = gsap.quickTo(cards, 'rotation', { duration: 1, ease: 'elastic.out(1, 0.35)' })
       let settleTimer
 
-      const tween = gsap.to(track, {
+      gsap.to(track, {
         x: () => -distance(),
         ease: 'none',
         scrollTrigger: {
@@ -71,21 +68,15 @@ export default function SkillsSection() {
         }
       })
 
+      // matchMedia reverts the tween, the pin and the swing when this query stops matching
       return () => {
         clearTimeout(settleTimer)
-        tween.scrollTrigger?.kill()
-        tween.kill()
-        gsap.set(cards, { rotation: 0 })
-        gsap.set(track, { x: 0 })
         section.classList.remove('is-pinned')
       }
     })
 
-    return () => {
-      mm.revert()
-      wrapper.removeEventListener('scroll', onNativeScroll)
-    }
-  }, [])
+    return () => wrapper.removeEventListener('scroll', onNativeScroll)
+  }, { scope: sectionRef })
 
   return (
     <section className="services" id="skills" ref={sectionRef}>

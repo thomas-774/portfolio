@@ -17,7 +17,7 @@ export default function Footer() {
   return (
     <footer>
       <div className="footer-inner">
-        <span className="footer-copy">&copy; 2026 — {profile.name}</span>
+        <span className="footer-copy">&copy; {new Date().getFullYear()} — {profile.name}</span>
         <div className="footer-socials">
           {socials.map((s) => (
             <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}>

@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ScrollTrigger, useGSAP } from '../lib/gsap'
 import { useScrollTo } from '../hooks/useScrollTo'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const links = [
   { label: 'Home', href: '#hero' },
@@ -22,14 +19,13 @@ export default function Navbar() {
 
   const closeMenu = useCallback(() => setMenuOpen(false), [])
 
-  useEffect(() => {
-    const st = ScrollTrigger.create({
+  useGSAP(() => {
+    ScrollTrigger.create({
       start: 'top -80',
       onEnter: () => navRef.current?.classList.add('scrolled'),
       onLeaveBack: () => navRef.current?.classList.remove('scrolled')
     })
-    return () => st.kill()
-  }, [])
+  })
 
   useEffect(() => {
     // A section is active while it crosses the line 40% down the screen

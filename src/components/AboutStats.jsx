@@ -1,14 +1,14 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
+import { useRef } from 'react'
+import { gsap, useGSAP } from '../lib/gsap'
+import { prefersReducedMotion } from '../lib/motion'
 
 export default function AboutStats({ stats }) {
   const statRefs = useRef([])
-  const animsRef = useRef([])
 
-  useEffect(() => {
+  useGSAP(() => {
+    // Reduced motion: show the final numbers without counting up
+    if (prefersReducedMotion()) return
+
     statRefs.current.forEach((stat) => {
       if (!stat) return
 
@@ -19,7 +19,7 @@ export default function AboutStats({ stats }) {
 
       if (!suffix) return
 
-      const anim = gsap.to(counter, {
+      gsap.to(counter, {
         val: target,
         duration: 2,
         ease: 'power2.out',
@@ -32,18 +32,8 @@ export default function AboutStats({ stats }) {
           toggleActions: 'play none none none'
         }
       })
-
-      animsRef.current.push(anim)
     })
-
-    return () => {
-      animsRef.current.forEach((a) => {
-        a.kill()
-        if (a.scrollTrigger) a.scrollTrigger.kill()
-      })
-      animsRef.current = []
-    }
-  }, [])
+  })
 
   return (
     <div className="about-stats">

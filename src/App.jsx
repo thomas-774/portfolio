@@ -1,4 +1,5 @@
 import './App.css'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import Cursor from './components/Cursor'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
@@ -19,6 +20,7 @@ export default function App() {
       <AboutSection />
       <ContactSection />
       <Footer />
+      <SpeedInsights />
     </>
   )
 }
