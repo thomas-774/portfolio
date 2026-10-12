@@ -9,18 +9,18 @@ export default function AboutStats({ stats }) {
     // Reduced motion: show the final numbers without counting up
     if (prefersReducedMotion()) return
 
-    statRefs.current.forEach((stat) => {
-      if (!stat) return
+    // Count up to the values from the data, never from the DOM: the DOM text
+    // is changed by this animation, so reading it back (e.g. when StrictMode
+    // runs the effect twice) would give 0
+    stats.forEach(({ number, suffix }, i) => {
+      const stat = statRefs.current[i]
+      // Only "N+" stats count up; the graduation year stays as it is
+      if (!stat || !suffix) return
 
-      const raw = stat.textContent
-      const target = parseInt(raw) || 0
-      const suffix = raw.replace(/[0-9]/g, '') || ''
       const counter = { val: 0 }
 
-      if (!suffix) return
-
       gsap.to(counter, {
-        val: target,
+        val: number,
         duration: 2,
         ease: 'power2.out',
         onUpdate() {
@@ -33,7 +33,7 @@ export default function AboutStats({ stats }) {
         }
       })
     })
-  })
+  }, { dependencies: [stats] })
 
   return (
     <div className="about-stats">
