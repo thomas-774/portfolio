@@ -69,9 +69,19 @@ export default function WorkCard({ project, index, isFirst }) {
     const observers = []
 
     if (video) {
-      const obs = new IntersectionObserver(
+      // Start downloading only when the card is close to the screen
+      const loadObs = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return
+          video.src = video.dataset.src
+          loadObs.disconnect()
+        },
+        { rootMargin: '400px 0px' }
+      )
+      const playObs = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
+            if (!video.getAttribute('src')) video.src = video.dataset.src
             video.play().catch(() => {})
           } else {
             video.pause()
@@ -79,8 +89,9 @@ export default function WorkCard({ project, index, isFirst }) {
         },
         { threshold: 0.4 }
       )
-      obs.observe(video)
-      observers.push(obs)
+      loadObs.observe(video)
+      playObs.observe(video)
+      observers.push(loadObs, playObs)
     }
 
     return () => {
@@ -97,7 +108,7 @@ export default function WorkCard({ project, index, isFirst }) {
       <div className="work-card-inner">
         <div className={`work-card-visual${media?.type === 'video' ? ' has-video' : ''}`} ref={visualRef}>
           {media?.type === 'video' && (
-            <video ref={videoRef} src={media.src} poster={media.poster} muted loop playsInline preload="metadata" className="work-card-video" />
+            <video ref={videoRef} data-src={media.src} poster={media.poster} muted loop playsInline preload="none" className="work-card-video" />
           )}
           {media?.type === 'image' && (
             <img src={media.src} alt={media.alt} loading="lazy" className="work-card-img" />

@@ -30,7 +30,7 @@ function HeroText({ greetingRef, introRef }) {
 function HeroAvatar({ imgRef }) {
   return (
     <div className="hero-avatar">
-      <img ref={imgRef} src={profile.photoSrc} alt={profile.name} className="avatar-img" />
+      <img ref={imgRef} src={profile.photoSrc} alt={profile.name} className="avatar-img" fetchPriority="high" width="1000" height="747" />
     </div>
   )
 }

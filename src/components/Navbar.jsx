@@ -32,24 +32,25 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
-    const update = () => {
-      let activeIdx = 0
-      for (let i = 0; i < links.length; i++) {
-        const section = document.querySelector(links[i].href)
-        if (!section) continue
-        const rect = section.getBoundingClientRect()
-        if (rect.top <= window.innerHeight * 0.4) {
-          activeIdx = i
-        }
-      }
-      linksRef.current.forEach((el, i) => {
-        el?.classList.toggle('active', i === activeIdx)
-      })
-    }
+    // A section is active while it crosses the line 40% down the screen
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          const activeIdx = links.findIndex((l) => l.href === `#${entry.target.id}`)
+          linksRef.current.forEach((el, i) => {
+            el?.classList.toggle('active', i === activeIdx)
+          })
+        })
+      },
+      { rootMargin: '-40% 0px -60% 0px' }
+    )
 
-    update()
-    window.addEventListener('scroll', update, { passive: true })
-    return () => window.removeEventListener('scroll', update)
+    links.forEach((l) => {
+      const section = document.querySelector(l.href)
+      if (section) obs.observe(section)
+    })
+    return () => obs.disconnect()
   }, [])
 
   const handleLinkClick = useCallback((href) => {
@@ -60,7 +61,7 @@ export default function Navbar() {
   return (
     <nav ref={navRef}>
       <a href="#" className="nav-logo" onClick={(e) => { e.preventDefault(); handleLinkClick('#') }}>
-        <img src="/logo%204.png" alt="Logo" className="nav-logo-img" />
+        <img src="/logo.webp" alt="Thomas Sameh logo" className="nav-logo-img" width="40" height="40" />
       </a>
 
       <div className="nav-actions">

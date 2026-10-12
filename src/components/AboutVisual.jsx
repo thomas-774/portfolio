@@ -30,7 +30,7 @@ export default function AboutVisual() {
 
   return (
     <div className="about-visual">
-      <img ref={ref} src="/abuot.jpeg" alt="About" className="about-img" />
+      <img ref={ref} src="/about.webp" alt="Thomas Sameh" className="about-img" loading="lazy" width="800" height="1067" />
     </div>
   )
 }

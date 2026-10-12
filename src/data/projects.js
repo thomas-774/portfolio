@@ -62,7 +62,7 @@ const projects = [
     linkLabel: 'View Projects',
     liveLink: null,
     liveLabel: 'Live Demo',
-    media: { type: 'image', src: '/e-commer.png', alt: 'E-Commerce System' }
+    media: { type: 'image', src: '/e-commerce.webp', alt: 'E-Commerce System' }
   }
 ]
 

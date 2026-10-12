@@ -36,12 +36,16 @@ body{
   border:2px solid var(--accent);
   border-radius:50%;
   position:fixed;
+  top:0;left:0;
   pointer-events:none;
   z-index:9999;
-  transition:transform .15s ease,opacity .15s ease;
+  will-change:transform;
+  transform:translate3d(-100px,-100px,0);
+  transition:scale .15s ease,opacity .15s ease;
   mix-blend-mode:difference
 }
-.cursor.hover{transform:scale(2);background:var(--accent);opacity:.3}
+.cursor.hover{scale:2;background:var(--accent);opacity:.3}
+@media (pointer: coarse){.cursor{display:none}}
 
 nav{
   position:fixed;top:0;left:0;right:0;
@@ -218,6 +222,7 @@ nav.scrolled{
 
 .avatar-img{
   width:100%;
+  height:auto;
   max-width:800px;
   border-radius:24px;
   object-fit:cover;
