@@ -14,36 +14,34 @@ export default function WorkSection() {
     const cards = stackRef.current?.querySelectorAll('.work-card-full')
     if (!cards || cards.length < 2) return
 
-    const triggers = []
+    // Stacking only on desktop: on phones the cards are taller than the screen
+    const mm = gsap.matchMedia()
 
-    cards.forEach((card, i) => {
-      if (i < cards.length - 1) {
-        const inner = card.querySelector('.work-card-inner')
-        const st = ScrollTrigger.create({
-          trigger: card,
-          start: 'top top+=20',
-          endTrigger: cards[i + 1],
-          end: 'top top',
-          pin: true,
-          pinSpacing: false,
-          scrub: true,
-          animation: gsap.to(inner, {
-            scale: 0.94,
-            borderRadius: '20px',
-            boxShadow: '0 8px 30px oklch(15% 0.02 260 / 0.2)',
-            y: -10,
-            ease: 'none'
+    mm.add('(min-width: 769px)', () => {
+      cards.forEach((card, i) => {
+        if (i < cards.length - 1) {
+          const inner = card.querySelector('.work-card-inner')
+          ScrollTrigger.create({
+            trigger: card,
+            start: 'top top+=20',
+            endTrigger: cards[i + 1],
+            end: 'top top',
+            pin: true,
+            pinSpacing: false,
+            scrub: true,
+            animation: gsap.to(inner, {
+              scale: 0.94,
+              borderRadius: '20px',
+              boxShadow: '0 8px 30px oklch(15% 0.02 260 / 0.2)',
+              y: -10,
+              ease: 'none'
+            })
           })
-        })
-        triggers.push(st)
-      }
+        }
+      })
     })
 
-    ScrollTrigger.refresh()
-
-    return () => {
-      triggers.forEach((st) => st.kill())
-    }
+    return () => mm.revert()
   }, [])
 
   return (

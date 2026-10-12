@@ -12,9 +12,9 @@ const profile = {
     'When I\'m not writing code or debugging, you\'ll find me diving into online courses — from Harvard\'s CS50 to advanced JavaScript and Java OOP. I\'m constantly learning and tinkering with new technologies to sharpen my craft.'
   ],
   stats: [
-    { number: 5, suffix: '+', label: 'Projects delivered' },
+    { number: 6, suffix: '+', label: 'Projects delivered' },
     { number: 2028, suffix: '', label: 'Graduation year' },
-    { number: 2, suffix: '+', label: 'Year coding' }
+    { number: 2, suffix: '+', label: 'Years coding' }
   ],
   social: {
     github: 'https://github.com/thomas-774',

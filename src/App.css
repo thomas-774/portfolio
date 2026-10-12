@@ -13,7 +13,7 @@
   --font-body:'Inter',-apple-system,system-ui,sans-serif;
 }
 
-html{scroll-behavior:smooth}
+
 
 body{
   font-family:var(--font-body);
@@ -359,7 +359,7 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 60px 80px;
+  padding: clamp(32px, 6vh, 60px) clamp(32px, 5vw, 72px);
   position: relative;
   z-index: 2;
 }
@@ -387,26 +387,26 @@ section {
 
 .work-card-title {
   font-family: var(--font-display);
-  font-size: clamp(36px, 4vw, 64px);
+  font-size: clamp(34px, 3.4vw, 56px);
   color: var(--fg);
-  line-height: 1.1;
-  margin-bottom: 24px;
+  line-height: 1.08;
+  margin-bottom: clamp(14px, 2.5vh, 24px);
   white-space: pre-line;
 }
 
 .work-card-desc {
-  font-size: 18px;
+  font-size: 17px;
   color: var(--muted);
-  line-height: 1.7;
+  line-height: 1.65;
   max-width: 480px;
-  margin-bottom: 32px;
+  margin-bottom: clamp(18px, 3vh, 28px);
 }
 
 .work-card-tech {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 40px;
+  gap: 8px;
+  margin-bottom: clamp(22px, 4vh, 36px);
 }
 
 .tech-pill{
@@ -426,32 +426,39 @@ section {
 
 .work-card-links {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
-  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
 }
 
 .work-card-link{
   display:inline-flex;
   align-items:center;
   gap:10px;
+  padding:12px 22px;
+  border:1.5px solid var(--accent);
+  border-radius:100px;
   color:var(--accent);
   font-weight:600;
   font-size:15px;
   text-decoration:none;
-  transition:gap .3s ease,text-shadow .3s ease
+  transition:background .3s ease,color .3s ease,border-color .3s ease
 }
-.work-card-link:hover{gap:16px}
+.work-card-link:hover{background:var(--accent);color:var(--surface)}
 .work-card-link svg{width:18px;height:18px;transition:transform .3s ease}
 .work-card-link:hover svg{transform:translateX(4px)}
 
 .work-card-link-live {
-  color: oklch(65% 0.20 145);
+  background: oklch(60% 0.17 150);
+  border-color: oklch(60% 0.17 150);
+  color: var(--surface);
+}
+.work-card-link-live:hover {
+  background: oklch(52% 0.16 150);
+  border-color: oklch(52% 0.16 150);
 }
 
-.work-card-full:nth-child(1) .work-card-visual,
-.work-card-full:nth-child(2) .work-card-visual,
-.work-card-full:nth-child(3) .work-card-visual {
+.work-card-visual.has-video {
   background: linear-gradient(135deg, oklch(30% 0.10 260 / 0.08) 0%, oklch(25% 0.08 280 / 0.06) 100%);
 }
 
@@ -471,15 +478,23 @@ section {
   z-index: 5;
 }
 
+/* Default (mobile / reduced motion): native horizontal swipe with snap */
 .services-wire-wrapper {
   position: relative;
   width: 100%;
-  overflow: hidden;
+  padding: 40px 0 56px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 40px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
+.services-wire-wrapper::-webkit-scrollbar { display: none; }
 
 .wire-line {
   position: absolute;
-  top: 60px;
+  top: 0;
   left: 0;
   right: 0;
   height: 2px;
@@ -491,11 +506,8 @@ section {
 .services-wire-track {
   display: flex;
   gap: 40px;
-  padding: 0 40px 0;
-  will-change: transform;
-  position: absolute;
-  top: 60px;
-  left: 0;
+  padding: 0 40px;
+  position: relative;
   width: max-content;
   align-items: flex-start;
 }
@@ -503,7 +515,38 @@ section {
 .service-hang-card {
   flex: 0 0 340px;
   position: relative;
+  scroll-snap-align: start;
+  transform-origin: 50% 0;
 }
+
+.services-progress {
+  max-width: 1400px;
+  height: 2px;
+  margin: 0 auto 80px;
+  width: calc(100% - 80px);
+  background: oklch(100% 0 0 / 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.services-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+/* Desktop: section is pinned and the track is moved by GSAP */
+.services.is-pinned {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.services.is-pinned .services-header { padding-top: 96px; padding-bottom: 8px; }
+.services.is-pinned .services-wire-wrapper { overflow: hidden; scroll-snap-type: none; }
+.services.is-pinned .services-wire-track { will-change: transform; }
+.services.is-pinned .services-progress { margin-bottom: 48px; }
 
 .service-hang-assembly {
   display: flex;
@@ -548,6 +591,12 @@ section {
   overflow: hidden;
   box-shadow: 0 12px 40px oklch(15% 0.02 260 / 0.35);
   margin-top: -1px;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.service-hang-body:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px oklch(15% 0.02 260 / 0.4);
 }
 
 .service-hang-header {
@@ -694,6 +743,10 @@ section {
 .service-hang-card:nth-child(6) .service-hang-header-text { color: oklch(68% 0.18 310); }
 .service-hang-card:nth-child(6) .service-hang-header-badge { background: oklch(68% 0.18 310); }
 .service-hang-card:nth-child(6) .service-hang-content { background: oklch(90% 0.05 320); }
+
+.service-hang-card:nth-child(7) .service-hang-header-text { color: oklch(72% 0.16 55); }
+.service-hang-card:nth-child(7) .service-hang-header-badge { background: oklch(72% 0.16 55); }
+.service-hang-card:nth-child(7) .service-hang-content { background: oklch(91% 0.05 65); }
 
 .about {
   background: var(--surface);
@@ -1000,6 +1053,19 @@ footer{
     padding: 30px 20px;
   }
 
+  .work-card-full {
+    padding: 12px 16px;
+  }
+
+  .work-card-visual {
+    height: 30vh;
+  }
+
+  .work-card-link {
+    padding: 11px 18px;
+    font-size: 14px;
+  }
+
   .work-card-desc {
     font-size: 16px;
   }
@@ -1029,6 +1095,15 @@ footer{
     padding: 0 16px;
   }
 
+  .services-wire-wrapper {
+    scroll-padding-inline: 16px;
+  }
+
+  .services-progress {
+    width: calc(100% - 32px);
+    margin-bottom: 60px;
+  }
+
   .service-hang-skills {
     flex-wrap: wrap;
   }
@@ -1038,3 +1113,10 @@ footer{
   }
 }
 
+/* Phones/tablets: no card stacking, so cards grow to fit their content */
+@media (max-width: 768px) {
+  .work-card-full {
+    height: auto;
+    margin-bottom: 24px;
+  }
+}

@@ -14,8 +14,7 @@ export default function WorkCard({ project, index, isFirst }) {
   const techRef = useRef(null)
   const linkRef = useRef(null)
   const videoRef = useRef(null)
-  const roveVideoRef = useRef(null)
-  const gpaVideoRef = useRef(null)
+  const { media } = project
 
   useEffect(() => {
     const anim = []
@@ -23,7 +22,7 @@ export default function WorkCard({ project, index, isFirst }) {
     if (isFirst) {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
       tl
-        .fromTo(numberRef.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5 })
+        .fromTo(numberRef.current, { opacity: 0, y: 40 }, { opacity: 0.06, y: 0, duration: 0.5 })
         .fromTo(visualRef.current, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6 }, '-=0.3')
         .fromTo(tagRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '-=0.3')
         .fromTo(titleRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
@@ -66,14 +65,14 @@ export default function WorkCard({ project, index, isFirst }) {
     })
     anim.push(parallax)
 
-    const videos = [videoRef.current, roveVideoRef.current, gpaVideoRef.current].filter(Boolean)
+    const video = videoRef.current
     const observers = []
 
-    videos.forEach((video) => {
+    if (video) {
       const obs = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            video.play()
+            video.play().catch(() => {})
           } else {
             video.pause()
           }
@@ -82,7 +81,7 @@ export default function WorkCard({ project, index, isFirst }) {
       )
       obs.observe(video)
       observers.push(obs)
-    })
+    }
 
     return () => {
       anim.forEach((a) => {
@@ -96,18 +95,12 @@ export default function WorkCard({ project, index, isFirst }) {
   return (
     <div className="work-card-full" ref={cardRef}>
       <div className="work-card-inner">
-        <div className="work-card-visual" ref={visualRef}>
-          {index === 0 ? (
-            <video ref={roveVideoRef} src="/rove.mp4" muted loop playsInline className="work-card-video" />
-          ) : index === 1 ? (
-            <video ref={videoRef} src="/movie.mp4" muted loop playsInline className="work-card-video" />
-          ) : index === 2 ? (
-            <video ref={gpaVideoRef} src="/GPA.mp4" muted loop playsInline className="work-card-video" />
-          ) : index === 3 ? (
-            <img src="/e-commer.png" alt="E-Commerce System" className="work-card-img" />
-          ) : (
-          <svg viewBox="0 0 600 500" fill="none">
-          </svg>
+        <div className={`work-card-visual${media?.type === 'video' ? ' has-video' : ''}`} ref={visualRef}>
+          {media?.type === 'video' && (
+            <video ref={videoRef} src={media.src} poster={media.poster} muted loop playsInline preload="metadata" className="work-card-video" />
+          )}
+          {media?.type === 'image' && (
+            <img src={media.src} alt={media.alt} loading="lazy" className="work-card-img" />
           )}
         </div>
         <div className="work-card-content">
@@ -120,8 +113,8 @@ export default function WorkCard({ project, index, isFirst }) {
               <span className="tech-pill" key={t}>{t}</span>
             ))}
           </div>
-          <div className="work-card-links">
-            <a href={project.link} className="work-card-link" ref={linkRef} target="_blank" rel="noopener noreferrer">
+          <div className="work-card-links" ref={linkRef}>
+            <a href={project.link} className="work-card-link" target="_blank" rel="noopener noreferrer">
               {project.linkLabel}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>

@@ -30,16 +30,31 @@ const skills = [
     bottomEnd: 'UX'
   },
   {
+    id: 7,
+    badge: 'API',
+    header: 'BACK',
+    label: 'Backend',
+    name: 'Server Side',
+    skills: [
+      { name: 'Node.js', tool: 'Express' },
+      { name: 'PHP', tool: 'Laravel' },
+      { name: 'REST APIs', tool: 'JSON' },
+      { name: 'Auth', tool: 'Sanctum' }
+    ],
+    bottom: 'API',
+    bottomEnd: 'SERVER'
+  },
+  {
     id: 3,
     badge: 'DATA',
     header: 'DATA',
     label: 'Databases',
     name: 'Data Management',
     skills: [
-      { name: 'SQL', tool: 'Queries' },
+      { name: 'MySQL', tool: 'Relational' },
+      { name: 'MongoDB', tool: 'NoSQL' },
       { name: 'DB Design', tool: 'Modeling' },
-      { name: 'Normalization', tool: 'Schemas' },
-      { name: 'ER Diagrams', tool: 'Relations' }
+      { name: 'Normalization', tool: 'Schemas' }
     ],
     bottom: 'SQL',
     bottomEnd: 'NOSQL'

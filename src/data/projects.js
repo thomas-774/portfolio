@@ -1,5 +1,18 @@
 const projects = [
   {
+    id: 5,
+    tag: 'SaaS · Full-Stack',
+    title: 'Teby\nClinic Management',
+    description:
+      'A clinic management SaaS for doctors: patient records, visits and installment payments, online booking with auto-generated slots, and printable prescriptions with PDF/Word export. Bilingual Arabic/English.',
+    tech: ['React', 'Laravel 13', 'PHP 8.3', 'MySQL', 'Sanctum', 'TanStack Query', 'Tailwind', 'i18next'],
+    link: 'https://github.com/thomas-774/clinic-management',
+    linkLabel: 'View on GitHub',
+    liveLink: 'https://teby-demo.vercel.app/login',
+    liveLabel: 'Live Demo',
+    media: { type: 'video', src: '/promo-video-ar.mp4' }
+  },
+  {
     id: 2,
     tag: 'Web Application',
     title: 'Rove\nRide Booking',
@@ -10,7 +23,7 @@ const projects = [
     linkLabel: 'View on GitHub',
     liveLink: null,
     liveLabel: 'Live Demo',
-    visualClass: 'visual-blue'
+    media: { type: 'video', src: '/rove.mp4' }
   },
   {
     id: 1,
@@ -23,7 +36,7 @@ const projects = [
     linkLabel: 'View on GitHub',
     liveLink: 'https://move-list.netlify.app/',
     liveLabel: 'Live Demo',
-    visualClass: 'visual-dark'
+    media: { type: 'video', src: '/movie.mp4' }
   },
   {
     id: 3,
@@ -36,7 +49,7 @@ const projects = [
     linkLabel: 'View on GitHub',
     liveLink: 'https://precious-bonbon-e4dec0.netlify.app/',
     liveLabel: 'Live Demo',
-    visualClass: 'visual-teal'
+    media: { type: 'video', src: '/GPA.mp4' }
   },
   {
     id: 4,
@@ -49,7 +62,7 @@ const projects = [
     linkLabel: 'View Projects',
     liveLink: null,
     liveLabel: 'Live Demo',
-    visualClass: 'visual-warm'
+    media: { type: 'image', src: '/e-commer.png', alt: 'E-Commerce System' }
   }
 ]
 

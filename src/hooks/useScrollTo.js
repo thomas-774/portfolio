@@ -8,7 +8,7 @@ export function useScrollTo() {
   const scrollTo = useCallback((href) => {
     gsap.killTweensOf(window)
     if (!href || href === '#') {
-      gsap.to(window, { scrollTo: { y: 0 }, duration: 0 })
+      gsap.to(window, { scrollTo: { y: 0 }, duration: 0.9, ease: 'power3.inOut' })
       return
     }
     const target = document.querySelector(href)
@@ -17,7 +17,8 @@ export function useScrollTo() {
       const offset = (nav ? nav.offsetHeight : 80) - 130
       gsap.to(window, {
         scrollTo: { y: target, offsetY: offset },
-        duration: 0
+        duration: 0.9,
+        ease: 'power3.inOut'
       })
     }
   }, [])
