@@ -6,10 +6,10 @@ const skills = [
     label: 'Languages',
     name: 'Programming',
     skills: [
+      { name: 'C#', tool: '.NET' },
       { name: 'C++', tool: 'OOP/STL' },
-      { name: 'Java', tool: 'JVM' },
-      { name: 'JavaScript', tool: 'ES6+' },
-      { name: 'Python', tool: 'Scripting' }
+      { name: 'Java', tool: 'OOP' },
+      { name: 'JS / TS', tool: 'ES6+' }
     ],
     bottom: 'DEV',
     bottomEnd: 'CODE'
@@ -24,7 +24,7 @@ const skills = [
       { name: 'HTML/CSS', tool: 'Responsive' },
       { name: 'React.js', tool: 'Hooks/JSX' },
       { name: 'Tailwind', tool: 'Utility' },
-      { name: 'Framer', tool: 'Animation' }
+      { name: 'TanStack', tool: 'Query' }
     ],
     bottom: 'UI',
     bottomEnd: 'UX'
@@ -36,10 +36,10 @@ const skills = [
     label: 'Backend',
     name: 'Server Side',
     skills: [
-      { name: 'Node.js', tool: 'Express' },
-      { name: 'PHP', tool: 'Laravel' },
-      { name: 'REST APIs', tool: 'JSON' },
-      { name: 'Auth', tool: 'Sanctum' }
+      { name: 'ASP.NET Core', tool: 'Web API' },
+      { name: 'EF Core', tool: 'ORM' },
+      { name: 'Laravel', tool: 'PHP' },
+      { name: 'Node.js', tool: 'Express' }
     ],
     bottom: 'API',
     bottomEnd: 'SERVER'
@@ -51,10 +51,10 @@ const skills = [
     label: 'Databases',
     name: 'Data Management',
     skills: [
+      { name: 'SQL Server', tool: 'Relational' },
       { name: 'MySQL', tool: 'Relational' },
       { name: 'MongoDB', tool: 'NoSQL' },
-      { name: 'DB Design', tool: 'Modeling' },
-      { name: 'Normalization', tool: 'Schemas' }
+      { name: 'DB Design', tool: 'ERD' }
     ],
     bottom: 'SQL',
     bottomEnd: 'NOSQL'
@@ -83,8 +83,8 @@ const skills = [
     skills: [
       { name: 'UML', tool: 'Diagrams' },
       { name: 'Requirements', tool: 'Analysis' },
-      { name: 'OOP', tool: 'Design' },
-      { name: 'Algorithms', tool: 'DSA' }
+      { name: 'OOP', tool: 'Principles' },
+      { name: 'Patterns', tool: 'Design' }
     ],
     bottom: 'DES',
     bottomEnd: 'DEV'
@@ -93,13 +93,13 @@ const skills = [
     id: 5,
     badge: 'TOOL',
     header: 'TOOL',
-    label: 'Tools',
+    label: 'Tools & Cloud',
     name: 'Developer Tools',
     skills: [
-      { name: 'Git', tool: 'Version Ctrl' },
-      { name: 'MS Office', tool: 'Productivity' },
-      { name: 'VS Code', tool: 'Editor' },
-      { name: 'Terminal', tool: 'CLI' }
+      { name: 'Git', tool: 'GitHub' },
+      { name: 'Azure DevOps', tool: 'Boards' },
+      { name: 'Azure', tool: 'Cloud' },
+      { name: 'Swagger', tool: 'API Docs' }
     ],
     bottom: 'DEV',
     bottomEnd: 'OPS'

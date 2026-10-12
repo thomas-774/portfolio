@@ -5,6 +5,7 @@ import { useScrollTo } from '../hooks/useScrollTo'
 const links = [
   { label: 'Home', href: '#hero' },
   { label: 'Work', href: '#work' },
+  { label: 'Experience', href: '#experience' },
   { label: 'Skills', href: '#skills' },
   { label: 'About', href: '#about' },
   { label: 'Contact', href: '#contact' }

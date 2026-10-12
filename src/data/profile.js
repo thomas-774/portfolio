@@ -11,7 +11,7 @@ const profile = {
   photoSrc: '/photo.webp',
   cvSrc: '/Thomas_Sameh_Fouad_Resume.pdf',
   bio: [
-    "I'm a Software Engineering student at Cairo University, passionate about building digital products that feel as good as they look. Currently pursuing my B.Sc. with an expected graduation in 2028, I bridge the gap between algorithms and beautiful interfaces.",
+    "I'm a Software Engineering student at Cairo University, passionate about building digital products that feel as good as they look. Currently pursuing my B.Sc. with an expected graduation in 2028, I bridge the gap between algorithms and beautiful interfaces. Most recently I interned at ProArt, a Microsoft Solutions Partner, where I led a 14-member team building an internal ERP system.",
     'When I\'m not writing code or debugging, you\'ll find me diving into online courses — from Harvard\'s CS50 to advanced JavaScript and Java OOP. I\'m constantly learning and tinkering with new technologies to sharpen my craft.'
   ],
   stats: [
